@@ -93,6 +93,7 @@ class MLP(object):
     training.
 
     """
+    self.params = None
     def __init__(self,
             rng,
             input,
@@ -163,6 +164,8 @@ class MLP(object):
         # Grab all the parameters together.
         self.params = [ param for layer in self.dropout_layers for param in layer.params ]
 
+    def getParams(self):
+        return self.params
 
 def test_mlp(
         initial_learning_rate,
@@ -349,7 +352,11 @@ def test_mlp(
         # Compute loss on validation set
         validation_losses = [validate_model(i) for i in xrange(n_valid_batches)]
         this_validation_errors = np.sum(validation_losses)
-
+        # screenshot parameters
+        params_file = open('params_{0}.txt', 'wb')
+        params_file.write(','.join(classifier.getParams()))
+        params_file.flush()
+        params_file.close()
         # Report and save progress.
         print "epoch {}, test error {}, learning_rate={}{}".format(
                 epoch_counter, this_validation_errors,
